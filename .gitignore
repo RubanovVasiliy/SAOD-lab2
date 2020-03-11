@@ -3,4 +3,5 @@
 !.gitignore
 !.clang-format
 !*.c
+!*.h
 !Makefile

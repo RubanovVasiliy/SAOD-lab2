@@ -1,3 +1,3 @@
-main: main.c
+res: main.c
 	rm -rf main
-	gcc -Wall -o main main.c -lm
+	gcc -Wall -o res main.c bstree.c hashtab.c -lm
