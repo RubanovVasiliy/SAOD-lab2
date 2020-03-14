@@ -53,50 +53,69 @@ bstree* bstree_lookup(bstree* tree, int key)
     return tree;
 };
 
+void replace_node(bstree* parent, bstree* node, bstree* child)
+{
+    if (parent != NULL) {
+        if (node->key < parent->key) {
+            parent->left = child;
+        } else {
+            parent->right = child;
+        }
+    }
+}
+
+bstree* delete_node(bstree* tree, bstree* node, bstree* parent)
+{
+    if (node->left == NULL) {
+        replace_node(parent, node, node->right);
+        if (parent == NULL) {
+            tree = node->right;
+        }
+    } else if (node->right == NULL) {
+        replace_node(parent, node, node->left);
+        if (parent == NULL) {
+            tree = node->left;
+        }
+    } else {
+        bstree* min = node->right;
+        bstree* minParent = min;
+        while (min->left != NULL) {
+            minParent = min;
+            min = node->right;
+        }
+        replace_node(parent, node, min);
+        if (parent == NULL) {
+            tree = min;
+        }
+        if (node->right != min) {
+            minParent->left = min->right;
+            min->left = node->left;
+            min->right = node->right;
+        } else {
+            min->left = node->left;
+        }
+    }
+    free(node);
+    return tree;
+}
+
 bstree* bstree_delete(bstree* tree, int key)
 {
-
-    bstree **q, *z;
-
-    q = &tree;
-    z = tree;
-    //поиск удаляемого элемента
-    while (1) {
-        if (z == NULL)
-            return 0;
-        else if (key == z->key)
-            break;
-        else if (key > z->key) {
-            q = &z->right;
-            z = z->right;
+    bstree* parent = NULL;
+    bstree* node = tree;
+    while (node != NULL && node->key != key) {
+        parent = node;
+        if (key < node->key) {
+            node = node->left;
         } else {
-            q = &z->left;
-            z = z->left;
+            node = node->right;
         }
     }
-
-    // непосредственное удаление элемента
-    if (z->right == NULL)
-        *q = z->left;
-    else {
-        bstree* y = z->right;
-        if (y->left == NULL) {
-            y->left = z->left;
-            *q - y;
-        } else {
-            bstree* x = y->left;
-            while (x->left != NULL) {
-                y = x;
-                x = y->left;
-            }
-            y->left = x->right;
-            x->left = z->left;
-            x->right = z->right;
-            *q = x;
-        }
+    if (node == NULL) {
+        return tree;
     }
-    free(z);
-};
+    return delete_node(tree, node, parent);
+}
 
 bstree* bstree_min(bstree* tree)
 {

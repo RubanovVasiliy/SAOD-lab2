@@ -5,14 +5,6 @@
 
 #define HASH_SIZE 128
 
-unsigned int KRHash(char* s)
-{
-    unsigned int h = 0, hash_mul = 31;
-    while (*s)
-        h = h * hash_mul + (unsigned int)*s++;
-    return h % HASH_SIZE;
-}
-
 unsigned int hashtab_hash(char* key)
 {
     unsigned int h = 0, hash_mul = 31;
